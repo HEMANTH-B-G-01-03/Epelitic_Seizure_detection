@@ -52,3 +52,46 @@ model = models.Sequential([
 
 # Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model
+history = model.fit(
+    x=X_train,
+    y=y_train,
+    batch_size=10,
+    epochs=10,  # Use smaller epochs for testing; adjust as needed
+    verbose=2,
+    validation_data=(X_val, y_val)
+)
+
+# Save the trained model
+model.save('epileptic_seizure_detection_model.h5')
+print("Model saved as 'epileptic_seizure_detection_model.h5'")
+
+# Predictions and Confusion Matrix for Training Data
+y_train_pred_probs = model.predict(X_train)
+y_train_pred = (y_train_pred_probs > 0.5).astype(int).flatten()
+conf_matrix_train = confusion_matrix(y_train, y_train_pred)
+print("\nTraining Confusion Matrix:")
+print(conf_matrix_train)
+
+plt.figure(figsize=(6, 4))
+sns.heatmap(conf_matrix_train, annot=True, fmt='d', cmap='Blues', xticklabels=["No Seizure", "Seizure"], yticklabels=["No Seizure", "Seizure"])
+plt.title("Training Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.show()
+
+# Predictions and Confusion Matrix for Validation Data
+y_val_pred_probs = model.predict(X_val)
+y_val_pred = (y_val_pred_probs > 0.5).astype(int).flatten()
+conf_matrix_val = confusion_matrix(y_val, y_val_pred)
+print("\nValidation Confusion Matrix:")
+print(conf_matrix_val)
+
+plt.figure(figsize=(6, 4))
+sns.heatmap(conf_matrix_val, annot=True, fmt='d', cmap='Blues', xticklabels=["No Seizure", "Seizure"], yticklabels=["No Seizure", "Seizure"])
+plt.title("Validation Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.show()
+
